@@ -2,39 +2,34 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Traits\AuditFields;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-#[Fillable(['name', 'email', 'password', 'created_by', 'updated_by', 'deleted_by'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    use HasApiTokens, HasUuids, SoftDeletes, Notifiable;
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, Notifiable, HasUuids, SoftDeletes, AuditFields;
 
-    protected $keyType = 'string';
-    public $incrementing = false;
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
 
-    /**
-     * Automatically fill audit fields.
-     */
-    protected static function booted(): void
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected function casts(): array
     {
-        static::creating(fn ($model) => $model->created_by = auth()->id());
-        static::updating(fn ($model) => $model->updated_by = auth()->id());
-        static::deleting(fn ($model) => $model->deleted_by = auth()->id());
-    }
-
-    /**
-     * Optional: If a user has votes
-     */
-    public function votes(): HasMany
-    {
-        return $this->hasMany(Vote::class);
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 }

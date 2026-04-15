@@ -2,24 +2,32 @@
 
 namespace App\Models;
 
+use App\Traits\AuditFields;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
 class Admin extends Authenticatable
 {
-    use HasUuids, Notifiable;
+    use HasFactory, Notifiable, HasUuids, SoftDeletes, AuditFields;
 
-    protected $keyType = 'string';
-    public $incrementing = false;
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
 
-    public function polls(): HasMany
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected function casts(): array
     {
-        return $this->hasMany(Poll::class);
+        return [
+            'password' => 'hashed',
+        ];
     }
 }
