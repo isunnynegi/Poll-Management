@@ -2,27 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'password', 'created_by', 'updated_by', 'deleted_by'])]
-#[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+#[Fillable(['poll_id', 'option_text', 'created_by', 'updated_by', 'deleted_by'])]
+class PollOption extends Model
 {
-    use HasApiTokens, HasUuids, SoftDeletes, Notifiable;
+    use HasUuids, SoftDeletes;
 
     protected $keyType = 'string';
     public $incrementing = false;
 
-    /**
-     * Automatically fill audit fields.
-     */
     protected static function booted(): void
     {
         static::creating(fn ($model) => $model->created_by = auth()->id());
@@ -30,11 +24,13 @@ class User extends Authenticatable
         static::deleting(fn ($model) => $model->deleted_by = auth()->id());
     }
 
-    /**
-     * Optional: If a user has votes
-     */
+    public function poll(): BelongsTo
+    {
+        return $this->belongsTo(Poll::class);
+    }
+
     public function votes(): HasMany
     {
-        return $this->hasMany(Vote::class);
+        return $this->hasMany(Vote::class, 'poll_option_id');
     }
 }
