@@ -42,7 +42,7 @@ class PollView extends Component
     public function getListeners()
     {
         return [
-            "echo:poll.{$this->poll->id},vote.cast" => 'onVoteCast',
+            "echo:poll.{$this->poll->id},.vote.cast" => 'onVoteCast',
         ];
     }
 

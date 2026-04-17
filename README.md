@@ -4,7 +4,6 @@ A complete real-time Poll Management System built with clean architecture (Repos
 
 ## Features
 - **Admin Panel**: Register, Login, Dashboard, Poll CRUD.
-- **Dynamic Options**: Add/remove poll options on the fly.
 - **Real-time Results**: Live progress bars updating via WebSockets (Laravel Reverb).
 - **Secure Voting**: Restricts multiple votes via IP (guests) or User ID (logged-in).
 - **UUIDs**: All database tables use UUIDs as primary keys.
@@ -37,7 +36,7 @@ A complete real-time Poll Management System built with clean architecture (Repos
    php artisan reverb:start
 
    # Terminal 3: Asset Bundling
-   npm run dev
+   npm run build
    ```
 
 ## How to Test Real-time Voting
